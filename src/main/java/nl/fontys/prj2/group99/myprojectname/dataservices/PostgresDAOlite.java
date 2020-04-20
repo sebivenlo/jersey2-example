@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The type Postgres da olite.
+ * The type PostgresDAOlite.
  *
  * @author dos
  */
@@ -59,6 +59,7 @@ public class PostgresDAOlite extends Postgres implements DAOlite<SimplePresident
 
     @Override
     public SimplePresident get(int id) {
+        // be aware that this is unsafe! Use prepared statements instead.
         try (ResultSet rs = executeQuery(SELECT_PRESIDENT_STATEMENT + id)) {
             return createPresident(id, rs);
         } catch (SQLException ex) {
