@@ -16,6 +16,9 @@ The structure is as follows:
 - clone first `git clone https://github.com/FontysVenlo/jersey2-example.git`
     - (if you want to use it as base for your project, use this as a template, see button above near cloning button)
 - then of course change to the directory `cd jersey2-example` 
+
+![clone and change directory](https://user-images.githubusercontent.com/764295/79967324-f9d61200-848e-11ea-8f57-d875795f4651.gif)
+
 - build your own docker container based on the [Dockerfile](Dockerfile). Have a look into it how it works. 
 
 ```bash
