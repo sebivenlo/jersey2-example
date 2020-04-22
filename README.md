@@ -3,7 +3,7 @@
 # Simple Jersey 2 example
 Simple jersey 2 start application with **president example database** - used for Project at Fontys Venlo.
 
-This example is just a *start*, this means, no detailed explanations will be given as well as no *ready* implementation. It is also **not** mandatory to do it like this.
+This example is just a *start*, this means, no detailed explanations will be given as well as no *ready* implementation. It is also **not** mandatory to do it like this or to take everything like provided, you need to adapt it for your project.
 
 The structure is as follows: 
 
