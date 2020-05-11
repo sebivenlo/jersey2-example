@@ -19,8 +19,10 @@ public class Postgres {
     private static final String DB_NAME = "postgres";
     private static final String DB_USER = "postgres";
     private static final String DB_PWD = "mypassword";
-    
+    private static final int DB_PORT = 5432;
+
     private PGConnectionPoolDataSource source;
+
 
 
     /**
@@ -49,6 +51,7 @@ public class Postgres {
         source.setDatabaseName(DB_NAME);
         source.setUser(DB_USER);
         source.setPassword(DB_PWD);
+        source.setPortNumber(DB_PORT);
     }
 
     /**
