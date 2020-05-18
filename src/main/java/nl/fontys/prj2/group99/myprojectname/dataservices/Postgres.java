@@ -1,13 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package nl.fontys.prj2.group99.myprojectname.dataservices;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.postgresql.ds.PGConnectionPoolDataSource;
 
 import java.sql.*;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The type Postgres.
@@ -15,23 +16,36 @@ import java.sql.*;
  * @author Geert Monsieur {@code g.monsieur@fontys.nl}
  */
 public class Postgres {
-    private final String SERVER_NAME;
-    private static final String DB_NAME = "postgres";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PWD = "mypassword";
-    private static final int DB_PORT = 5432;
+
+    private String server_name = "localhost";
+    private String db_name = "postgres";
+    private String db_user = "postgres";
+    private String db_passwd = "mypassword";
+    private int db_port = 5432;
 
     private PGConnectionPoolDataSource source;
-
-
 
     /**
      * Instantiates a new Postgres.
      *
      * @param server_name the server name
      */
-    public Postgres(String server_name) {
-        SERVER_NAME = server_name;
+    public Postgres( String server_name ) {
+
+        try {
+            Properties props = new Properties();
+            props.load( Files.newInputStream( Paths.get( "connection.properties" ) ) );
+            server_name = props.getProperty( "SERVER_NAME", server_name );
+            db_name = props.getProperty( "DB_NAME", db_name );
+            db_user = props.getProperty( "DB_USER", db_user );
+            db_passwd = props.getProperty( "DB_PASSWD", db_passwd );
+            db_port = Integer.parseInt( props.getProperty( "DB_PORT", Integer.toString( db_port ) ) );
+        } catch ( IOException ex ) {
+            Logger.getLogger( Postgres.class.getName() ).log( Level.SEVERE, null, ex );
+        }
+        System.out.println( "db_name = " + db_name);
+        System.out.println( "db_user = " + db_user);
+        System.out.println( "db_port = " + db_port);
         createPGDataSource();
     }
 
@@ -47,11 +61,11 @@ public class Postgres {
 
     private void createPGDataSource() {
         source = new PGConnectionPoolDataSource();
-        source.setServerName(SERVER_NAME);
-        source.setDatabaseName(DB_NAME);
-        source.setUser(DB_USER);
-        source.setPassword(DB_PWD);
-        source.setPortNumber(DB_PORT);
+        source.setServerName( server_name );
+        source.setDatabaseName( db_name );
+        source.setUser( db_user );
+        source.setPassword( db_passwd );
+        source.setPortNumber( db_port );
     }
 
     /**
@@ -61,8 +75,8 @@ public class Postgres {
      * @return the prepared statement
      * @throws SQLException the sql exception
      */
-    protected PreparedStatement createPreparedStatementWithKeysReturned(String sql) throws SQLException {
-        return getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+    protected PreparedStatement createPreparedStatementWithKeysReturned( String sql ) throws SQLException {
+        return getConnection().prepareStatement( sql, Statement.RETURN_GENERATED_KEYS );
     }
 
     /**
@@ -72,7 +86,7 @@ public class Postgres {
      * @return the result set
      * @throws SQLException the sql exception
      */
-    protected ResultSet executeQuery(String sql) throws SQLException {
-        return getConnection().createStatement().executeQuery(sql);
+    protected ResultSet executeQuery( String sql ) throws SQLException {
+        return getConnection().createStatement().executeQuery( sql );
     }
 }

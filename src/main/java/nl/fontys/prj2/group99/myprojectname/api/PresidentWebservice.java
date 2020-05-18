@@ -40,9 +40,10 @@ public class PresidentWebservice {
     @Path("presidents")
     @Produces(MediaType.APPLICATION_JSON)
     public List<SimplePresident> readAll() {
-        List<SimplePresident> result = new ArrayList<SimplePresident>();
-        result.add(new SimplePresident("Geert Monsieur", 1983));
-        return result;
+        List<SimplePresident> all = db.getAll();
+//        List<SimplePresident> result = new ArrayList<SimplePresident>();
+//        all.add(new SimplePresident("Geert Monsieur", 1983));
+        return all;
     }
 
 

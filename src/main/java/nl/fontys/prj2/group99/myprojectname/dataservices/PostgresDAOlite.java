@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,91 +35,90 @@ public class PostgresDAOlite extends Postgres implements DAOlite<SimplePresident
      *
      * @param server_name the server name
      */
-    public PostgresDAOlite(String server_name) {
-        super(server_name);
+    public PostgresDAOlite( String server_name ) {
+        super( server_name );
     }
 
     @Override
-    public SimplePresident save(SimplePresident p) {
-        try (PreparedStatement pst = createPreparedStatementWithKeysReturned(INSERT_PRESIDENT_STATEMENT)) {
-            pst.setString(1, p.getName());
-            pst.setInt(2, p.getBirth_year());
+    public SimplePresident save( SimplePresident p ) {
+        try ( PreparedStatement pst = createPreparedStatementWithKeysReturned( INSERT_PRESIDENT_STATEMENT ) ) {
+            pst.setString( 1, p.getName() );
+            pst.setInt( 2, p.getBirth_year() );
             pst.execute();
             ResultSet keyset = pst.getGeneratedKeys();
-            if (keyset.next()) {
-                p.setId(keyset.getInt(1));
+            if ( keyset.next() ) {
+                p.setId( keyset.getInt( 1 ) );
             }
 
             return p;
-        } catch (SQLException ex) {
-            Logger.getLogger(PostgresDAOlite.class.getName()).
-                    log(Level.SEVERE, null, ex);
+        } catch ( SQLException ex ) {
+            Logger.getLogger( PostgresDAOlite.class.getName() ).
+                    log( Level.SEVERE, null, ex );
             return null;
         }
     }
 
     @Override
-    public SimplePresident get(int id) {
+    public SimplePresident get( int id ) {
         // be aware that this is unsafe! Use prepared statements instead.
-        try (ResultSet rs = executeQuery(SELECT_PRESIDENT_STATEMENT + id)) {
-            return createPresident(id, rs);
-        } catch (SQLException ex) {
-            Logger.getLogger(PostgresDAOlite.class.getName()).
-                    log(Level.SEVERE, null, ex);
+        try ( ResultSet rs = executeQuery( SELECT_PRESIDENT_STATEMENT + id ) ) {
+            return createPresident( id, rs );
+        } catch ( SQLException ex ) {
+            Logger.getLogger( PostgresDAOlite.class.getName() ).
+                    log( Level.SEVERE, null, ex );
             return null;
         }
     }
 
     @Override
     public List<SimplePresident> getAll() {
-        List<SimplePresident> result = new ArrayList<>();
-        try (ResultSet rs = executeQuery(SELECT_ALL_STATEMENT)) {
-            getPresidentsFromResult(result, rs);
-        } catch (SQLException ex) {
-            Logger.getLogger(PostgresDAOlite.class.getName()).
-                    log(Level.SEVERE, null, ex);
+        try ( ResultSet rs = executeQuery( SELECT_ALL_STATEMENT ) ) {
+            return getPresidentsFromResult( rs );
+        } catch ( SQLException ex ) {
+            Logger.getLogger( PostgresDAOlite.class.getName() ).
+                    log( Level.SEVERE, null, ex );
             ex.printStackTrace();
-            return null;
+            return Collections.emptyList();
         }
-        return result;
     }
 
-    private List<SimplePresident> getPresidentsFromResult(List<SimplePresident> result, ResultSet rs) throws SQLException {
+    private List<SimplePresident> getPresidentsFromResult( ResultSet rs ) throws SQLException {
         List<SimplePresident> presidents = new ArrayList<SimplePresident>();
-        while (rs.next()) {
-            int id = rs.getInt("id");
+        while ( rs.next() ) {
+            int id = rs.getInt( "id" );
 
-            String name = rs.getString("name");
-            int birth_year = rs.getInt("birth_year");
-            SimplePresident president = new SimplePresident(id, name, birth_year);
-            presidents.add(president);
+            String name = rs.getString( "name" );
+            int birth_year = rs.getInt( "birth_year" );
+            SimplePresident president = new SimplePresident( id, name, birth_year );
+            System.out.println( "president = " + president );
+            presidents.add( president );
         }
         return presidents;
     }
 
     @Override
-    public SimplePresident update(SimplePresident p) {
+    public SimplePresident update( SimplePresident p ) {
         return null; // exercise for the student
     }
 
     @Override
-    public void delete(int id) {
+    public void delete( int id ) {
         String sql = "delete from president where id = ?";
         try (
                 Connection con = getConnection();
-                PreparedStatement pst = con.prepareStatement(sql)) {
-            pst.setInt(1, id);
+                PreparedStatement pst = con.prepareStatement( sql ) ) {
+            pst.setInt( 1, id );
             pst.execute();
-        } catch (SQLException ex) {
-            Logger.getLogger(PostgresDAOlite.class.getName()).log(Level.SEVERE, null, ex);
+        } catch ( SQLException ex ) {
+            Logger.getLogger( PostgresDAOlite.class.getName() ).log( Level.SEVERE, null, ex );
         }
     }
 
-    private SimplePresident createPresident(int id, ResultSet rs) throws SQLException {
-        if (rs.next()) {
-            String name = rs.getString("name");
-            int birth_year = rs.getInt("birth_year");
-            return new SimplePresident(id, name, birth_year);
+    private SimplePresident createPresident( int id, ResultSet rs ) throws SQLException {
+        if ( rs.next() ) {
+            String name = rs.getString( "name" );
+            int birth_year = rs.getInt( "birth_year" );
+            return new SimplePresident( id, name, birth_year );
         } else {
             return null;
         }
